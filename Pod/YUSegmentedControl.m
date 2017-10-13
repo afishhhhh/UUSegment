@@ -521,6 +521,11 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     [NSLayoutConstraint constraintWithItem:_contentContainer attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0].active = YES;
 }
 
+- (CGSize)intrinsicContentSize
+{
+    return CGSizeMake(self.frame.size.width, self.frame.size.height);
+}
+
 + (BOOL)requiresConstraintBasedLayout {
     return YES;
 }
