@@ -137,6 +137,13 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     
 }
 
+- (void)setSelectedSegmentIndex:(NSUInteger)selectedSegmentIndex
+{
+    if (_selectedSegmentIndex != selectedSegmentIndex) {
+        [self segmentDidSelectAtIndex:selectedSegmentIndex didDeselectAtIndex:_selectedSegmentIndex];
+    }
+}
+
 #pragma mark - Private
 
 - (void)copyTitles:(NSArray <NSString *> *)titles {
