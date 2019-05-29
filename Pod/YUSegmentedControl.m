@@ -201,14 +201,9 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     CGRect frame = _indicator.frame;
     frame.origin.x += CGRectGetWidth(_indicator.bounds) * (toIndex - fromIndex);
     if (isTap) {
-        [UIView animateWithDuration:kAnimationDuration animations:^{
-            _indicator.frame = frame;
-        } completion:^(BOOL finished) {
-            if (finished) {
-                _selectedSegmentIndex = toIndex;
-                [self sendActionsForControlEvents:UIControlEventValueChanged];
-            }
-        }];
+        _indicator.frame = frame;
+        _selectedSegmentIndex = toIndex;
+        [self sendActionsForControlEvents:UIControlEventValueChanged];
     }else{
         [UIView animateWithDuration:kAnimationDuration
                               delay:0.0
