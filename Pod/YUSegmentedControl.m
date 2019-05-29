@@ -140,7 +140,9 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
 - (void)setSelectedSegmentIndex:(NSUInteger)selectedSegmentIndex
 {
     if (_selectedSegmentIndex != selectedSegmentIndex) {
-        [self segmentDidSelectAtIndex:selectedSegmentIndex didDeselectAtIndex:_selectedSegmentIndex];
+        [self segmentDidSelectAtIndex:selectedSegmentIndex
+                   didDeselectAtIndex:_selectedSegmentIndex
+                                isTap:NO];
     }
 }
 
@@ -154,7 +156,9 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     self.contents = contents;
 }
 
-- (void)segmentDidSelectAtIndex:(NSUInteger)newIndex didDeselectAtIndex:(NSUInteger)oldIndex {
+- (void)segmentDidSelectAtIndex:(NSUInteger)newIndex
+             didDeselectAtIndex:(NSUInteger)oldIndex
+                          isTap:(BOOL)isTap {
     
     // update UI
     if (_contentType == YUSegmentedControlContentTypeText) {
@@ -173,10 +177,12 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
         }
     }
     // animation
-    [self moveIndicatorFromIndex:oldIndex toIndex:newIndex];
+    [self moveIndicatorFromIndex:oldIndex toIndex:newIndex isTap:isTap];
 }
 
-- (void)moveIndicatorFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
+- (void)moveIndicatorFromIndex:(NSInteger)fromIndex
+                       toIndex:(NSInteger)toIndex
+                         isTap:(BOOL)isTap{
     
 //    CABasicAnimation *animation;
 //    CGPoint position = _indicator.position;
@@ -194,11 +200,12 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     // indicator animate
     CGRect frame = _indicator.frame;
     frame.origin.x += CGRectGetWidth(_indicator.bounds) * (toIndex - fromIndex);
+    CGFloat velocity = isTap?0:3.0;
     
     [UIView animateWithDuration:kAnimationDuration
                           delay:0.0
          usingSpringWithDamping:0.66
-          initialSpringVelocity:3.0
+          initialSpringVelocity:velocity
                         options:UIViewAnimationOptionCurveLinear
                      animations:^{
                          _indicator.frame = frame;
@@ -318,7 +325,9 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     NSUInteger toIndex = [_contentContainer.subviews indexOfObject:hitView];
     if (toIndex != NSNotFound) {
         if (_selectedSegmentIndex != toIndex) {
-            [self segmentDidSelectAtIndex:toIndex didDeselectAtIndex:_selectedSegmentIndex];
+            [self segmentDidSelectAtIndex:toIndex
+                       didDeselectAtIndex:_selectedSegmentIndex
+                                    isTap:YES];
         }
     }
 }
