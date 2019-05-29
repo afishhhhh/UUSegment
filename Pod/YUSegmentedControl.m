@@ -200,22 +200,31 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     // indicator animate
     CGRect frame = _indicator.frame;
     frame.origin.x += CGRectGetWidth(_indicator.bounds) * (toIndex - fromIndex);
-    CGFloat velocity = isTap?0:3.0;
-    
-    [UIView animateWithDuration:kAnimationDuration
-                          delay:0.0
-         usingSpringWithDamping:0.66
-          initialSpringVelocity:velocity
-                        options:UIViewAnimationOptionCurveLinear
-                     animations:^{
-                         _indicator.frame = frame;
-        
-    } completion:^(BOOL finished) {
-        if (finished) {
-            _selectedSegmentIndex = toIndex;
-            [self sendActionsForControlEvents:UIControlEventValueChanged];
-        }
-    }];
+    if (isTap) {
+        [UIView animateWithDuration:kAnimationDuration animations:^{
+            _indicator.frame = frame;
+        } completion:^(BOOL finished) {
+            if (finished) {
+                _selectedSegmentIndex = toIndex;
+                [self sendActionsForControlEvents:UIControlEventValueChanged];
+            }
+        }];
+    }else{
+        [UIView animateWithDuration:kAnimationDuration
+                              delay:0.0
+             usingSpringWithDamping:0.66
+              initialSpringVelocity:3.0
+                            options:UIViewAnimationOptionCurveLinear
+                         animations:^{
+                             _indicator.frame = frame;
+                             
+                         } completion:^(BOOL finished) {
+                             if (finished) {
+                                 _selectedSegmentIndex = toIndex;
+                                 [self sendActionsForControlEvents:UIControlEventValueChanged];
+                             }
+                         }];
+    }
 }
 
 #pragma mark - 
