@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The index number identifying the selected segment.
  */
-@property (nonatomic, assign, readonly) NSUInteger selectedSegmentIndex;
+@property (nonatomic, assign) NSUInteger selectedSegmentIndex;
 
 ///-----------------------------------
 /// @name Managing Segments Appearance

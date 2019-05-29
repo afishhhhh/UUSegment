@@ -137,6 +137,15 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     
 }
 
+- (void)setSelectedSegmentIndex:(NSUInteger)selectedSegmentIndex
+{
+    if (_selectedSegmentIndex != selectedSegmentIndex) {
+        [self segmentDidSelectAtIndex:selectedSegmentIndex
+                   didDeselectAtIndex:_selectedSegmentIndex
+                                isTap:NO];
+    }
+}
+
 #pragma mark - Private
 
 - (void)copyTitles:(NSArray <NSString *> *)titles {
@@ -147,7 +156,9 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     self.contents = contents;
 }
 
-- (void)segmentDidSelectAtIndex:(NSUInteger)newIndex didDeselectAtIndex:(NSUInteger)oldIndex {
+- (void)segmentDidSelectAtIndex:(NSUInteger)newIndex
+             didDeselectAtIndex:(NSUInteger)oldIndex
+                          isTap:(BOOL)isTap {
     
     // update UI
     if (_contentType == YUSegmentedControlContentTypeText) {
@@ -166,10 +177,12 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
         }
     }
     // animation
-    [self moveIndicatorFromIndex:oldIndex toIndex:newIndex];
+    [self moveIndicatorFromIndex:oldIndex toIndex:newIndex isTap:isTap];
 }
 
-- (void)moveIndicatorFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
+- (void)moveIndicatorFromIndex:(NSInteger)fromIndex
+                       toIndex:(NSInteger)toIndex
+                         isTap:(BOOL)isTap{
     
 //    CABasicAnimation *animation;
 //    CGPoint position = _indicator.position;
@@ -187,21 +200,26 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     // indicator animate
     CGRect frame = _indicator.frame;
     frame.origin.x += CGRectGetWidth(_indicator.bounds) * (toIndex - fromIndex);
-    
-    [UIView animateWithDuration:kAnimationDuration
-                          delay:0.0
-         usingSpringWithDamping:0.66
-          initialSpringVelocity:3.0
-                        options:UIViewAnimationOptionCurveLinear
-                     animations:^{
-                         _indicator.frame = frame;
-        
-    } completion:^(BOOL finished) {
-        if (finished) {
-            _selectedSegmentIndex = toIndex;
-            [self sendActionsForControlEvents:UIControlEventValueChanged];
-        }
-    }];
+    if (isTap) {
+        _indicator.frame = frame;
+        _selectedSegmentIndex = toIndex;
+        [self sendActionsForControlEvents:UIControlEventValueChanged];
+    }else{
+        [UIView animateWithDuration:kAnimationDuration
+                              delay:0.0
+             usingSpringWithDamping:0.66
+              initialSpringVelocity:3.0
+                            options:UIViewAnimationOptionCurveLinear
+                         animations:^{
+                             _indicator.frame = frame;
+                             
+                         } completion:^(BOOL finished) {
+                             if (finished) {
+                                 _selectedSegmentIndex = toIndex;
+                                 [self sendActionsForControlEvents:UIControlEventValueChanged];
+                             }
+                         }];
+    }
 }
 
 #pragma mark - 
@@ -311,7 +329,9 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
     NSUInteger toIndex = [_contentContainer.subviews indexOfObject:hitView];
     if (toIndex != NSNotFound) {
         if (_selectedSegmentIndex != toIndex) {
-            [self segmentDidSelectAtIndex:toIndex didDeselectAtIndex:_selectedSegmentIndex];
+            [self segmentDidSelectAtIndex:toIndex
+                       didDeselectAtIndex:_selectedSegmentIndex
+                                    isTap:YES];
         }
     }
 }
@@ -519,6 +539,11 @@ static const CGFloat        kIndicatorDefaultHeight = 3.0;
         lastView = view;
     }
     [NSLayoutConstraint constraintWithItem:_contentContainer attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0].active = YES;
+}
+
+- (CGSize)intrinsicContentSize
+{
+    return CGSizeMake(self.frame.size.width, self.frame.size.height);
 }
 
 + (BOOL)requiresConstraintBasedLayout {
